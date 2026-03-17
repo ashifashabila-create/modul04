@@ -70,6 +70,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>No</th>
+                    <th>Cover</th> <!-- ✅ TAMBAHAN -->
                     <th>Judul</th>
                     <th>Penulis</th>
                     <th>Tahun</th>
@@ -81,6 +82,18 @@
                 @forelse($books as $key => $book)
                 <tr>
                     <td>{{ $key + 1 }}</td>
+
+                    <!-- ✅ TAMPIL COVER -->
+                    <td>
+                        @if($book->cover)
+                            <img src="{{ asset('cover/'.$book->cover) }}" 
+                                 width="60" 
+                                 style="height:80px; object-fit:cover;">
+                        @else
+                            -
+                        @endif
+                    </td>
+
                     <td>{{ $book->judul }}</td>
                     <td>{{ $book->penulis }}</td>
                     <td>{{ $book->tahun_terbit }}</td>
@@ -104,7 +117,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center">
+                    <td colspan="7" class="text-center">
                         Data tidak ditemukan
                     </td>
                 </tr>

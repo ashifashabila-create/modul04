@@ -24,13 +24,11 @@ class BookController extends Controller
 
         $books = $query->get();
 
-        // TOTAL SEMUA BOOK (sesuai hasil filter)
+        // TOTAL SEMUA BOOK
         $totalBooks = $books->count();
 
-        // AMBIL SEMUA CATEGORY
         $categories = Category::all();
 
-        // TOTAL BOOK PER CATEGORY
         $totalPerCategory = Book::selectRaw('category_id, count(*) as total')
             ->groupBy('category_id')
             ->pluck('total', 'category_id');
@@ -49,6 +47,7 @@ class BookController extends Controller
         return view('books.create', compact('categories'));
     }
 
+    // ✅ STORE (tambah cover)
     public function store(Request $request)
     {
         $request->validate([
@@ -56,13 +55,24 @@ class BookController extends Controller
             'judul' => 'required',
             'penulis' => 'required',
             'tahun_terbit' => 'required|numeric',
-            'stok' => 'required|numeric'
+            'stok' => 'required|numeric',
+            'cover' => 'image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        Book::create($request->all());
+        $data = $request->all();
+
+        // upload cover
+        if ($request->hasFile('cover')) {
+            $file = $request->file('cover');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('cover'), $namaFile);
+            $data['cover'] = $namaFile;
+        }
+
+        Book::create($data);
 
         return redirect()->route('books.index')
-                ->with('success','Data berhasil ditambahkan');
+            ->with('success','Data berhasil ditambahkan');
     }
 
     public function edit(Book $book)
@@ -71,6 +81,7 @@ class BookController extends Controller
         return view('books.edit', compact('book', 'categories'));
     }
 
+    // ✅ UPDATE (update cover)
     public function update(Request $request, Book $book)
     {
         $request->validate([
@@ -78,13 +89,24 @@ class BookController extends Controller
             'judul' => 'required',
             'penulis' => 'required',
             'tahun_terbit' => 'required|numeric',
-            'stok' => 'required|numeric'
+            'stok' => 'required|numeric',
+            'cover' => 'image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        $book->update($request->all());
+        $data = $request->all();
+
+        // kalau upload cover baru
+        if ($request->hasFile('cover')) {
+            $file = $request->file('cover');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('cover'), $namaFile);
+            $data['cover'] = $namaFile;
+        }
+
+        $book->update($data);
 
         return redirect()->route('books.index')
-                ->with('success','Data berhasil diupdate');
+            ->with('success','Data berhasil diupdate');
     }
 
     public function destroy(Book $book)
@@ -92,6 +114,6 @@ class BookController extends Controller
         $book->delete();
 
         return redirect()->route('books.index')
-                ->with('success','Data berhasil dihapus');
+            ->with('success','Data berhasil dihapus');
     }
 }

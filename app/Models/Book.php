@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'category_id',
         'judul',
         'penulis',
         'tahun_terbit',
-        'stok'
+        'stok',
+        'cover' 
     ];
 
     public function category()
