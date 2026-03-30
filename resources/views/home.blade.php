@@ -2,6 +2,22 @@
 
 @section('content')
 
+<!-- NAVBAR SEDERHANA -->
+<div class="d-flex justify-content-between align-items-center p-3 bg-dark text-white">
+    <div>
+        <h5 class="mb-0">Dashboard</h5>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <span>Halo, {{ auth()->user()->name }}</span>
+
+        <form method="POST" action="/logout">
+            @csrf
+            <button class="btn btn-danger btn-sm">Logout</button>
+        </form>
+    </div>
+</div>
+
 <!-- HERO / BANNER -->
 <div style="
     background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb');
